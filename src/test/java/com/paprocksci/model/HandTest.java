@@ -1,10 +1,13 @@
 package com.paprocksci.model;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class HandTest {
+class HandTest {
 
     @Test
     void paperBeatsRock() {
@@ -22,33 +25,55 @@ public class HandTest {
     }
 
     @Test
-    void identicalHandsDoNotBeatEachOther() {
-        assertFalse(Hand.ROCK.beats(Hand.ROCK));
-        assertFalse(Hand.PAPER.beats(Hand.PAPER));
-        assertFalse(Hand.SCISSORS.beats(Hand.SCISSORS));
+    void rockBeatsLike() {
+        assertTrue(Hand.ROCK.beats(Hand.LIKE));
     }
 
     @Test
-    void handsDoNotBeatTheirDefeaters() {
-        assertFalse(Hand.ROCK.beats(Hand.PAPER));
-        assertFalse(Hand.PAPER.beats(Hand.SCISSORS));
-        assertFalse(Hand.SCISSORS.beats(Hand.ROCK));
+    void likeBeatsDislike() {
+        assertTrue(Hand.LIKE.beats(Hand.DISLIKE));
     }
 
     @Test
-    void identicalHandsDraw() {
-        assertTrue(Hand.ROCK.draws(Hand.ROCK));
-        assertTrue(Hand.PAPER.draws(Hand.PAPER));
-        assertTrue(Hand.SCISSORS.draws(Hand.SCISSORS));
+    void dislikeBeatsScissors() {
+        assertTrue(Hand.DISLIKE.beats(Hand.SCISSORS));
+    }
+
+    @Test
+    void likeBeatsPaper() {
+        assertTrue(Hand.LIKE.beats(Hand.PAPER));
+    }
+
+    @Test
+    void paperBeatsDislike() {
+        assertTrue(Hand.PAPER.beats(Hand.DISLIKE));
+    }
+
+    @Test
+    void scissorsBeatLike() {
+        assertTrue(Hand.SCISSORS.beats(Hand.LIKE));
+    }
+
+    @Test
+    void dislikeBeatsRock() {
+        assertTrue(Hand.DISLIKE.beats(Hand.ROCK));
+    }
+
+    @ParameterizedTest
+    @EnumSource(Hand.class)
+    void identicalHandsDoNotBeatEachOther(Hand hand) {
+        assertFalse(hand.beats(hand));
+    }
+
+    @ParameterizedTest
+    @EnumSource(Hand.class)
+    void identicalHandsDraw(Hand hand) {
+        assertTrue(hand.draws(hand));
     }
 
     @Test
     void differentHandsDoNotDraw() {
         assertFalse(Hand.ROCK.draws(Hand.PAPER));
-        assertFalse(Hand.ROCK.draws(Hand.SCISSORS));
-        assertFalse(Hand.PAPER.draws(Hand.ROCK));
-        assertFalse(Hand.PAPER.draws(Hand.SCISSORS));
-        assertFalse(Hand.SCISSORS.draws(Hand.ROCK));
-        assertFalse(Hand.SCISSORS.draws(Hand.PAPER));
+        assertFalse(Hand.LIKE.draws(Hand.DISLIKE));
     }
 }

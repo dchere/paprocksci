@@ -143,11 +143,13 @@ public class ConsoleUserInterface implements GameUi {
 
         @Override
         public void displayRoundResult(Hand player0Hand, Hand player1Hand, RoundResult result) {
-            System.out.printf("%s %s | %s %s%n",
-                    AnsiColor.apply(AnsiColor.Style.PLAYER, "You played:"),
-                    AnsiColor.apply(AnsiColor.Style.PLAYER, player0Hand.name()),
-                    AnsiColor.apply(AnsiColor.Style.COMPUTER, "Computer played:"),
-                    AnsiColor.apply(AnsiColor.Style.COMPUTER, player1Hand.name()));
+            HandAsciiArt.printDuel(
+                    player0Hand,
+                    player1Hand,
+                    "You",
+                    "Computer",
+                    AnsiColor.Style.PLAYER,
+                    AnsiColor.Style.COMPUTER);
 
             switch (result) {
                 case PLAYER_0 -> AnsiColor.println(AnsiColor.Style.SUCCESS, "Result: You win this round!");

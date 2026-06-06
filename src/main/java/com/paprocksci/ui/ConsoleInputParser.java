@@ -6,7 +6,8 @@ import com.paprocksci.model.Team;
 
 public class ConsoleInputParser {
 
-    public static final String HAND_PROMPT_RULES = "[1=Paper (p), 2=Rock (r), 3=Scissors (s)]";
+    public static final String HAND_PROMPT_RULES =
+            "[1=Paper (p), 2=Rock (r), 3=Scissors (s), 4=Like (l), 5=Dislike (i)]";
     public static final String GAME_MODE_PROMPT_RULES = "[1=Play vs Computer, 2=Computer vs Computer]";
     public static final String TEAM_PROMPT_RULES = "[b=Blue, y=Yellow]";
 
@@ -22,6 +23,8 @@ public class ConsoleInputParser {
             case "1", "p", "paper" -> Hand.PAPER;
             case "2", "r", "rock" -> Hand.ROCK;
             case "3", "s", "scissors" -> Hand.SCISSORS;
+            case "4", "l", "like" -> Hand.LIKE;
+            case "5", "i", "dislike" -> Hand.DISLIKE;
             default -> throw new IllegalArgumentException("Invalid move input: " + input);
         };
     }

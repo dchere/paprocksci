@@ -32,7 +32,19 @@ class ConsoleInputParserTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = { "42", "x", "lizard", "spock", "random" })
+    @ValueSource(strings = { "4", "l", "L", "like", "LIKE", "  l  " })
+    void testParseHand_Like(String input) {
+        assertEquals(Hand.LIKE, ConsoleInputParser.parseHand(input));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = { "5", "i", "I", "dislike", "DISLIKE", "  i  " })
+    void testParseHand_Dislike(String input) {
+        assertEquals(Hand.DISLIKE, ConsoleInputParser.parseHand(input));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = { "d", "diss", "k", "lizard", "spock", "42", "x", "random" })
     void testParseHand_InvalidInputThrowsException(String input) {
         assertThrows(IllegalArgumentException.class, () -> ConsoleInputParser.parseHand(input));
     }
