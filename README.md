@@ -4,7 +4,7 @@ Java console application for **Rock Paper Scissors Like Dislike**.
 
 ## Overview
 
-A console-based Rock Paper Scissors Like Dislike game with two modes:
+A console-based Rock Paper Scissors (plus Like and Dislike) game with two modes:
 
 1. **Player vs. Computer** – You enter each move, and the result is shown after every round.
 2. **Computer vs. Computer** – Two computer-controlled teams, Blue and Yellow, play silently. You choose which team you are a fan of, and only the final score is shown.
@@ -12,6 +12,38 @@ A console-based Rock Paper Scissors Like Dislike game with two modes:
 In both modes, you can choose how many rounds to play. The console interface uses color-coded output to distinguish prompts, hints, errors, teams, and results.
 
 All computer players use an honest random strategy: each round they pick one of five moves (Rock, Paper, Scissors, Like, Dislike) with equal probability, with no memory of previous moves.
+
+## Rules
+
+This is **not** classic Rock-Paper-Scissors. Five hands use a layered ruleset:
+
+```
+                DISLIKE  ← the strongest
+                   ↓
+       ________________________
+      ╱            │           ╲
+     ↓             ↓            ↓
+    ROCK  --►  SCISSORS  --►  PAPER  --►  ROCK (classical cycle)
+      ╲            │           ╱
+       ╲           ↓          ╱
+        \____________________/
+                   ↓
+                  LIKE  ← the weakest
+
+       LIKE  ←——— draw ———→  DISLIKE
+```
+
+Read an arrow as **“beats”**. Like and Dislike always tie each other.
+
+### Who beats whom
+
+| Hand | Beats | Loses to | Draws with |
+|------|-------|----------|------------|
+| **Rock** | Scissors, Like | Paper, Dislike | Rock |
+| **Paper** | Rock, Like | Scissors, Dislike | Paper |
+| **Scissors** | Paper, Like | Rock, Dislike | Scissors |
+| **Like** | — | Rock, Paper, Scissors | Like, Dislike |
+| **Dislike** | Rock, Paper, Scissors | — | Dislike, Like |
 
 ## Console Colors
 
@@ -45,11 +77,11 @@ Output is styled with ANSI colors when running in a terminal. Colors are enabled
 **Run the Game:**
 
    ```bash
-   java -jar target/paper-rock-scissors-1.0.0.jar
+   java -jar target/paper-rock-scissors-1.1.0.jar
    ```
 
 **Run with colors forced on (e.g. in some IDE terminals):**
 
    ```bash
-   FORCE_COLOR=true java -jar target/paper-rock-scissors-1.0.0.jar
+   FORCE_COLOR=true java -jar target/paper-rock-scissors-1.1.0.jar
    ```

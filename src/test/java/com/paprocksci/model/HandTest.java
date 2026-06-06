@@ -30,23 +30,8 @@ class HandTest {
     }
 
     @Test
-    void likeBeatsDislike() {
-        assertTrue(Hand.LIKE.beats(Hand.DISLIKE));
-    }
-
-    @Test
-    void dislikeBeatsScissors() {
-        assertTrue(Hand.DISLIKE.beats(Hand.SCISSORS));
-    }
-
-    @Test
-    void likeBeatsPaper() {
-        assertTrue(Hand.LIKE.beats(Hand.PAPER));
-    }
-
-    @Test
-    void paperBeatsDislike() {
-        assertTrue(Hand.PAPER.beats(Hand.DISLIKE));
+    void paperBeatsLike() {
+        assertTrue(Hand.PAPER.beats(Hand.LIKE));
     }
 
     @Test
@@ -55,8 +40,32 @@ class HandTest {
     }
 
     @Test
-    void dislikeBeatsRock() {
+    void dislikeBeatsRockPaperAndScissors() {
         assertTrue(Hand.DISLIKE.beats(Hand.ROCK));
+        assertTrue(Hand.DISLIKE.beats(Hand.PAPER));
+        assertTrue(Hand.DISLIKE.beats(Hand.SCISSORS));
+    }
+
+    @Test
+    void likeNeverBeatsAnotherHand() {
+        for (Hand other : Hand.values()) {
+            assertFalse(Hand.LIKE.beats(other));
+        }
+    }
+
+    @Test
+    void nothingBeatsDislike() {
+        for (Hand other : Hand.values()) {
+            assertFalse(other.beats(Hand.DISLIKE));
+        }
+    }
+
+    @Test
+    void likeAndDislikeAlwaysDraw() {
+        assertTrue(Hand.LIKE.draws(Hand.DISLIKE));
+        assertTrue(Hand.DISLIKE.draws(Hand.LIKE));
+        assertFalse(Hand.LIKE.beats(Hand.DISLIKE));
+        assertFalse(Hand.DISLIKE.beats(Hand.LIKE));
     }
 
     @ParameterizedTest
@@ -72,8 +81,9 @@ class HandTest {
     }
 
     @Test
-    void differentHandsDoNotDraw() {
+    void differentClassicHandsDoNotDraw() {
         assertFalse(Hand.ROCK.draws(Hand.PAPER));
-        assertFalse(Hand.LIKE.draws(Hand.DISLIKE));
+        assertFalse(Hand.PAPER.draws(Hand.SCISSORS));
+        assertFalse(Hand.SCISSORS.draws(Hand.ROCK));
     }
 }
