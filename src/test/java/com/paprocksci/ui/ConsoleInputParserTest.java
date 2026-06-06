@@ -1,6 +1,8 @@
 package com.paprocksci.ui;
 
+import com.paprocksci.model.GameMode;
 import com.paprocksci.model.Hand;
+import com.paprocksci.model.Team;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -40,6 +42,46 @@ class ConsoleInputParserTest {
         assertThrows(IllegalArgumentException.class, () -> ConsoleInputParser.parseHand(null));
         assertThrows(IllegalArgumentException.class, () -> ConsoleInputParser.parseHand(""));
         assertThrows(IllegalArgumentException.class, () -> ConsoleInputParser.parseHand("   "));
+    }
+
+    // --- Game Mode Parsing Tests ---
+
+    @ParameterizedTest
+    @ValueSource(strings = { "1", "p", "player", "PLAYER", "  p  " })
+    void testParseGameMode_PlayerVsComputer(String input) {
+        assertEquals(GameMode.PLAYER_VS_COMPUTER, ConsoleInputParser.parseGameMode(input));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = { "2", "c", "computer", "cvc", "COMPUTER", "  c  " })
+    void testParseGameMode_ComputerVsComputer(String input) {
+        assertEquals(GameMode.COMPUTER_VS_COMPUTER, ConsoleInputParser.parseGameMode(input));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = { "0", "spectator", "blue", "pvp", "2p" })
+    void testParseGameMode_InvalidInputThrowsException(String input) {
+        assertThrows(IllegalArgumentException.class, () -> ConsoleInputParser.parseGameMode(input));
+    }
+
+    // --- Team Parsing Tests ---
+
+    @ParameterizedTest
+    @ValueSource(strings = { "b", "B", "blue", "BLUE", "  blue  " })
+    void testParseTeam_Blue(String input) {
+        assertEquals(Team.BLUE, ConsoleInputParser.parseTeam(input));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = { "y", "Y", "yellow", "YELLOW", "  yellow  " })
+    void testParseTeam_Yellow(String input) {
+        assertEquals(Team.YELLOW, ConsoleInputParser.parseTeam(input));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = { "red", "1", "green" })
+    void testParseTeam_InvalidInputThrowsException(String input) {
+        assertThrows(IllegalArgumentException.class, () -> ConsoleInputParser.parseTeam(input));
     }
 
     // --- Rounds Parsing Tests ---

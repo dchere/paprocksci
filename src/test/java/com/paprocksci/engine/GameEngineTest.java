@@ -1,9 +1,11 @@
 package com.paprocksci.engine;
 
+import com.paprocksci.model.GameMode;
 import com.paprocksci.model.Hand;
-import com.paprocksci.model.Winner;
+import com.paprocksci.model.RoundResult;
+import com.paprocksci.model.Team;
 import com.paprocksci.strategy.ComputerStrategy;
-import com.paprocksci.ui.UserInterface;
+import com.paprocksci.ui.GameUi;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,7 +21,7 @@ import static org.mockito.Mockito.*;
 class GameEngineTest {
 
     @Mock
-    private UserInterface mockUi;
+    private GameUi mockUi;
 
     @Mock
     private ComputerStrategy mockStrategy;
@@ -32,49 +34,66 @@ class GameEngineTest {
     }
 
     @Test
-    void testEvaluateRound_PlayerWins() {
-        assertEquals(Winner.PLAYER, gameEngine.evaluateRound(Hand.ROCK, Hand.SCISSORS));
-        assertEquals(Winner.PLAYER, gameEngine.evaluateRound(Hand.PAPER, Hand.ROCK));
-        assertEquals(Winner.PLAYER, gameEngine.evaluateRound(Hand.SCISSORS, Hand.PAPER));
+    void testEvaluateRound_Player0Wins() {
+        assertEquals(RoundResult.PLAYER_0, gameEngine.evaluateRound(Hand.ROCK, Hand.SCISSORS));
+        assertEquals(RoundResult.PLAYER_0, gameEngine.evaluateRound(Hand.PAPER, Hand.ROCK));
+        assertEquals(RoundResult.PLAYER_0, gameEngine.evaluateRound(Hand.SCISSORS, Hand.PAPER));
     }
 
     @Test
-    void testEvaluateRound_ComputerWins() {
-        assertEquals(Winner.COMPUTER, gameEngine.evaluateRound(Hand.ROCK, Hand.PAPER));
-        assertEquals(Winner.COMPUTER, gameEngine.evaluateRound(Hand.PAPER, Hand.SCISSORS));
-        assertEquals(Winner.COMPUTER, gameEngine.evaluateRound(Hand.SCISSORS, Hand.ROCK));
+    void testEvaluateRound_Player1Wins() {
+        assertEquals(RoundResult.PLAYER_1, gameEngine.evaluateRound(Hand.ROCK, Hand.PAPER));
+        assertEquals(RoundResult.PLAYER_1, gameEngine.evaluateRound(Hand.PAPER, Hand.SCISSORS));
+        assertEquals(RoundResult.PLAYER_1, gameEngine.evaluateRound(Hand.SCISSORS, Hand.ROCK));
     }
 
     @Test
     void testEvaluateRound_Draw() {
-        assertEquals(Winner.DRAW, gameEngine.evaluateRound(Hand.ROCK, Hand.ROCK));
+        assertEquals(RoundResult.DRAW, gameEngine.evaluateRound(Hand.ROCK, Hand.ROCK));
     }
 
     @Test
-    void testGameLoop_UpdatesScoresCorrectly() {
+    void testPlayerVsComputer_UpdatesScoresCorrectly() {
         int totalRounds = 3;
+        when(mockUi.askForGameMode()).thenReturn(GameMode.PLAYER_VS_COMPUTER);
         when(mockUi.askForNumberOfRounds()).thenReturn(totalRounds);
 
-        when(mockUi.getPlayerHand(anyInt(), eq(totalRounds)))
+        when(mockUi.askForHand(anyInt(), eq(totalRounds)))
                 .thenReturn(Hand.ROCK)
                 .thenReturn(Hand.PAPER)
                 .thenReturn(Hand.SCISSORS);
 
         when(mockStrategy.generateHand())
-                .thenReturn(Hand.SCISSORS) // Player wins
-                .thenReturn(Hand.SCISSORS) // Computer wins
-                .thenReturn(Hand.SCISSORS); // Draw
+                .thenReturn(Hand.SCISSORS)
+                .thenReturn(Hand.SCISSORS)
+                .thenReturn(Hand.SCISSORS);
 
-        // Act
         gameEngine.start();
 
-        // Assert
-        assertEquals(1, gameEngine.getWins(), "Player should have 1 win");
-        assertEquals(1, gameEngine.getLosses(), "Player should have 1 loss");
-        assertEquals(1, gameEngine.getDraws(), "Player should have 1 draw");
+        assertEquals(1, gameEngine.getPlayer0Wins());
+        assertEquals(1, gameEngine.getPlayer1Wins());
+        assertEquals(1, gameEngine.getDraws());
 
         verify(mockUi).displayFinalScore(1, 1, 1);
+        verify(mockUi, times(totalRounds)).askForHand(anyInt(), eq(totalRounds));
+    }
 
-        verify(mockUi, times(totalRounds)).getPlayerHand(anyInt(), eq(totalRounds));
+    @Test
+    void testComputerVsComputer_ShowsOnlyFinalScore() {
+        int totalRounds = 3;
+        when(mockUi.askForGameMode()).thenReturn(GameMode.COMPUTER_VS_COMPUTER);
+        when(mockUi.askForNumberOfRounds()).thenReturn(totalRounds);
+        when(mockUi.askForFavoriteTeam()).thenReturn(Team.BLUE);
+
+        when(mockStrategy.generateHand())
+                .thenReturn(
+                        Hand.ROCK, Hand.SCISSORS,
+                        Hand.PAPER, Hand.SCISSORS,
+                        Hand.SCISSORS, Hand.SCISSORS);
+
+        gameEngine.start();
+
+        verify(mockUi).displayFinalScore(1, 1, 1, Team.BLUE);
+        verify(mockUi, never()).displayRoundResult(any(), any(), any());
     }
 }
